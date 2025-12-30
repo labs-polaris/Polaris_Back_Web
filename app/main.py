@@ -64,7 +64,7 @@ def custom_openapi():
         description=app.description,
         routes=app.routes,
     )
-    schema.setdefault("servers", [{"url": "http://localhost:8000", "description": "Local dev"}])
+    schema.setdefault("servers", [{"url": "http://0.0.0.0:6000", "description": "Local dev"}])
     schema.setdefault("components", {}).setdefault(
         "securitySchemes",
         {

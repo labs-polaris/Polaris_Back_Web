@@ -30,28 +30,28 @@ uvicorn app.main:app --reload
 ```
 
 ## API Docs
-- http://localhost:8000/docs
-- http://localhost:8000/redoc
+- http://localhost:6000/docs
+- http://localhost:6000/redoc
 
 ## Sample curl
 
 Register:
 ```bash
-curl -X POST http://localhost:8000/api/auth/register \
+curl -X POST http://localhost:6000/api/auth/register \
   -H "Content-Type: application/json" \
   -d '{"email":"owner@example.com","password":"PolarisPass1!","name":"Owner"}'
 ```
 
 Login:
 ```bash
-curl -X POST http://localhost:8000/api/auth/login \
+curl -X POST http://localhost:6000/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{"email":"owner@example.com","password":"PolarisPass1!"}'
 ```
 
 Create Org:
 ```bash
-curl -X POST http://localhost:8000/api/orgs \
+curl -X POST http://localhost:6000/api/orgs \
   -H "Authorization: Bearer <access_token>" \
   -H "Content-Type: application/json" \
   -d '{"name":"Polaris Lab Org"}'
@@ -59,7 +59,7 @@ curl -X POST http://localhost:8000/api/orgs \
 
 Create Project:
 ```bash
-curl -X POST http://localhost:8000/api/orgs/<org_id>/projects \
+curl -X POST http://localhost:6000/api/orgs/<org_id>/projects \
   -H "Authorization: Bearer <access_token>" \
   -H "Content-Type: application/json" \
   -d '{"name":"Web Console","key":"WEB"}'
@@ -67,7 +67,7 @@ curl -X POST http://localhost:8000/api/orgs/<org_id>/projects \
 
 Create Service:
 ```bash
-curl -X POST http://localhost:8000/api/projects/<project_id>/services \
+curl -X POST http://localhost:6000/api/projects/<project_id>/services \
   -H "Authorization: Bearer <access_token>" \
   -H "Content-Type: application/json" \
   -d '{"name":"Console API","type":"API","environment":"PROD"}'
@@ -75,7 +75,7 @@ curl -X POST http://localhost:8000/api/projects/<project_id>/services \
 
 Dashboard Summary:
 ```bash
-curl -X GET http://localhost:8000/api/dashboard/summary \
+curl -X GET http://localhost:6000/api/dashboard/summary \
   -H "Authorization: Bearer <access_token>"
 ```
 

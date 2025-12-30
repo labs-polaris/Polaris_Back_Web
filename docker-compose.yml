@@ -1,0 +1,39 @@
+services:
+  db:
+    image: mysql:8.0
+    container_name: polaris_lab_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: polaris_lab
+      MYSQL_USER: polaris_user
+      MYSQL_PASSWORD: polaris_pass
+      MYSQL_ROOT_PASSWORD: polaris_root_pass
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  adminer:
+    image: adminer:4
+    container_name: polaris_lab_adminer
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+
+  api:
+    build: .
+    container_name: polaris_lab_api
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: mysql+pymysql://polaris_user:polaris_pass@db:3306/polaris_lab
+      JWT_SECRET: change-this-secret
+      ACCESS_TOKEN_EXPIRE_MINUTES: 30
+      REFRESH_TOKEN_EXPIRE_DAYS: 7
+      CORS_ALLOW_ORIGINS: "*"
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+
+volumes:
+  mysql_data:

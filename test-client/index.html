@@ -1,0 +1,351 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Polaris Lab Console - Test Client</title>
+    <style>
+      :root {
+        --bg: #0b0f14;
+        --panel: #141b24;
+        --text: #e7edf4;
+        --muted: #9fb0c0;
+        --accent: #49d3a6;
+        --danger: #ff6b6b;
+        --border: #223041;
+      }
+      body {
+        margin: 0;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+      }
+      header {
+        padding: 20px;
+        border-bottom: 1px solid var(--border);
+      }
+      header h1 {
+        margin: 0 0 6px 0;
+        font-size: 20px;
+      }
+      header p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 13px;
+      }
+      main {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        padding: 20px;
+      }
+      .panel {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 16px;
+      }
+      .panel h2 {
+        margin: 0 0 12px 0;
+        font-size: 16px;
+      }
+      label {
+        display: block;
+        font-size: 12px;
+        color: var(--muted);
+        margin: 8px 0 4px;
+      }
+      input, select, textarea, button {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 8px 10px;
+        border-radius: 6px;
+        border: 1px solid var(--border);
+        background: #0f141b;
+        color: var(--text);
+      }
+      button {
+        margin-top: 10px;
+        background: var(--accent);
+        color: #0b0f14;
+        font-weight: 700;
+        cursor: pointer;
+        border: none;
+      }
+      .row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+      .output {
+        white-space: pre-wrap;
+        font-family: Consolas, "Courier New", monospace;
+        font-size: 12px;
+        color: #d9f0ff;
+        background: #0f141b;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        padding: 10px;
+        min-height: 120px;
+      }
+      .danger {
+        background: var(--danger);
+        color: #0b0f14;
+      }
+      .full {
+        grid-column: 1 / -1;
+      }
+      @media (max-width: 900px) {
+        main {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Polaris Lab Console Test Client</h1>
+      <p>FastAPI + MySQL backend smoke test UI (register/login/org/project/service/dashboard).</p>
+    </header>
+    <main>
+      <section class="panel full">
+        <h2>API Base</h2>
+        <label for="baseUrl">Base URL</label>
+        <input id="baseUrl" value="http://localhost:8000" />
+        <div class="row">
+          <button id="btnMe">/auth/me</button>
+          <button id="btnDashboard">/dashboard/summary</button>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Register</h2>
+        <label>Email</label>
+        <input id="regEmail" value="owner@example.com" />
+        <label>Password</label>
+        <input id="regPassword" type="password" value="PolarisPass1!" />
+        <label>Name</label>
+        <input id="regName" value="Owner" />
+        <button id="btnRegister">Register</button>
+      </section>
+
+      <section class="panel">
+        <h2>Login</h2>
+        <label>Email</label>
+        <input id="loginEmail" value="owner@example.com" />
+        <label>Password</label>
+        <input id="loginPassword" type="password" value="PolarisPass1!" />
+        <button id="btnLogin">Login</button>
+        <button id="btnLogout" class="danger">Logout</button>
+      </section>
+
+      <section class="panel">
+        <h2>Organization</h2>
+        <label>Org Name</label>
+        <input id="orgName" value="Polaris Lab Org" />
+        <button id="btnCreateOrg">Create Org</button>
+        <button id="btnListOrgs">List Orgs</button>
+      </section>
+
+      <section class="panel">
+        <h2>Project</h2>
+        <label>Org ID</label>
+        <input id="projectOrgId" placeholder="org_id" />
+        <label>Project Name</label>
+        <input id="projectName" value="Web Console" />
+        <label>Project Key</label>
+        <input id="projectKey" value="WEB" />
+        <button id="btnCreateProject">Create Project</button>
+      </section>
+
+      <section class="panel">
+        <h2>Service</h2>
+        <label>Project ID</label>
+        <input id="serviceProjectId" placeholder="project_id" />
+        <label>Service Name</label>
+        <input id="serviceName" value="Console API" />
+        <div class="row">
+          <div>
+            <label>Type</label>
+            <select id="serviceType">
+              <option>WEB</option>
+              <option selected>API</option>
+              <option>BATCH</option>
+              <option>OTHER</option>
+            </select>
+          </div>
+          <div>
+            <label>Environment</label>
+            <select id="serviceEnv">
+              <option>PROD</option>
+              <option>STAGE</option>
+              <option selected>DEV</option>
+            </select>
+          </div>
+        </div>
+        <button id="btnCreateService">Create Service</button>
+      </section>
+
+      <section class="panel full">
+        <h2>Output</h2>
+        <div id="output" class="output"></div>
+      </section>
+    </main>
+
+    <script>
+      const output = document.getElementById("output");
+
+      function setOutput(data) {
+        output.textContent = typeof data === "string" ? data : JSON.stringify(data, null, 2);
+      }
+
+      function getToken() {
+        return localStorage.getItem("access_token");
+      }
+
+      function baseUrl() {
+        return document.getElementById("baseUrl").value.replace(/\/$/, "");
+      }
+
+      async function api(path, options = {}) {
+        const headers = options.headers || {};
+        const token = getToken();
+        if (token) {
+          headers["Authorization"] = `Bearer ${token}`;
+        }
+        if (!headers["Content-Type"] && options.body) {
+          headers["Content-Type"] = "application/json";
+        }
+        const res = await fetch(`${baseUrl()}${path}`, {
+          ...options,
+          headers,
+        });
+        const json = await res.json().catch(() => ({}));
+        if (!res.ok) {
+          throw json;
+        }
+        return json;
+      }
+
+      document.getElementById("btnRegister").onclick = async () => {
+        try {
+          const body = {
+            email: document.getElementById("regEmail").value,
+            password: document.getElementById("regPassword").value,
+            name: document.getElementById("regName").value,
+          };
+          const data = await api("/api/auth/register", {
+            method: "POST",
+            body: JSON.stringify(body),
+          });
+          setOutput(data);
+        } catch (err) {
+          setOutput(err);
+        }
+      };
+
+      document.getElementById("btnLogin").onclick = async () => {
+        try {
+          const body = {
+            email: document.getElementById("loginEmail").value,
+            password: document.getElementById("loginPassword").value,
+          };
+          const data = await api("/api/auth/login", {
+            method: "POST",
+            body: JSON.stringify(body),
+          });
+          localStorage.setItem("access_token", data.data.access_token);
+          localStorage.setItem("refresh_token", data.data.refresh_token);
+          setOutput(data);
+        } catch (err) {
+          setOutput(err);
+        }
+      };
+
+      document.getElementById("btnLogout").onclick = () => {
+        localStorage.removeItem("access_token");
+        localStorage.removeItem("refresh_token");
+        setOutput("Logged out.");
+      };
+
+      document.getElementById("btnMe").onclick = async () => {
+        try {
+          const data = await api("/api/auth/me");
+          setOutput(data);
+        } catch (err) {
+          setOutput(err);
+        }
+      };
+
+      document.getElementById("btnDashboard").onclick = async () => {
+        try {
+          const data = await api("/api/dashboard/summary");
+          setOutput(data);
+        } catch (err) {
+          setOutput(err);
+        }
+      };
+
+      document.getElementById("btnCreateOrg").onclick = async () => {
+        try {
+          const body = { name: document.getElementById("orgName").value };
+          const data = await api("/api/orgs", {
+            method: "POST",
+            body: JSON.stringify(body),
+          });
+          const orgId = data.data.id;
+          document.getElementById("projectOrgId").value = orgId;
+          setOutput(data);
+        } catch (err) {
+          setOutput(err);
+        }
+      };
+
+      document.getElementById("btnListOrgs").onclick = async () => {
+        try {
+          const data = await api("/api/orgs");
+          setOutput(data);
+        } catch (err) {
+          setOutput(err);
+        }
+      };
+
+      document.getElementById("btnCreateProject").onclick = async () => {
+        try {
+          const orgId = document.getElementById("projectOrgId").value;
+          const body = {
+            name: document.getElementById("projectName").value,
+            key: document.getElementById("projectKey").value,
+          };
+          const data = await api(`/api/orgs/${orgId}/projects`, {
+            method: "POST",
+            body: JSON.stringify(body),
+          });
+          const projectId = data.data.id;
+          document.getElementById("serviceProjectId").value = projectId;
+          setOutput(data);
+        } catch (err) {
+          setOutput(err);
+        }
+      };
+
+      document.getElementById("btnCreateService").onclick = async () => {
+        try {
+          const projectId = document.getElementById("serviceProjectId").value;
+          const body = {
+            name: document.getElementById("serviceName").value,
+            type: document.getElementById("serviceType").value,
+            environment: document.getElementById("serviceEnv").value,
+          };
+          const data = await api(`/api/projects/${projectId}/services`, {
+            method: "POST",
+            body: JSON.stringify(body),
+          });
+          setOutput(data);
+        } catch (err) {
+          setOutput(err);
+        }
+      };
+    </script>
+  </body>
+</html>

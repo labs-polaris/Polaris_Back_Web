@@ -13,4 +13,4 @@ echo "Ensuring tables exist..."
 python /app/docker/ensure_tables.py
 
 echo "Starting API..."
-exec uvicorn app.main:app --host 0.0.0.0 --port 6000
+exec uvicorn app.main:app --host 0.0.0.0 --port 8000

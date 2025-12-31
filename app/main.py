@@ -37,7 +37,7 @@ app.add_middleware(RequestIdMiddleware)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.cors_origins_list(),
-    allow_credentials=True,
+    allow_credentials=False if settings.cors_allow_origins == "*" else True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -64,7 +64,7 @@ def custom_openapi():
         description=app.description,
         routes=app.routes,
     )
-    schema.setdefault("servers", [{"url": "http://0.0.0.0:8000", "description": "External / local"}])
+    schema.setdefault("servers", [{"url": "/", "description": "Same origin"}])
     schema.setdefault("components", {}).setdefault(
         "securitySchemes",
         {
